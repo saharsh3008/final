@@ -5,6 +5,10 @@ import subprocess
 
 app = FastAPI()
 
+@app.get("/")
+def read_root():
+    return {"status": "ok"}
+    
 @app.post("/upload/")
 async def upload_video(file: UploadFile = File(...)):
     input_path = f"input_videos/{file.filename}"
