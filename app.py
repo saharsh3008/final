@@ -1,12 +1,17 @@
 from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 import shutil
 import subprocess
 import os
 
 app = FastAPI()
 
+# Mount static files (for output videos)
+app.mount("/output", StaticFiles(directory="output_videos"), name="output")
+
+# Templates directory
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
@@ -25,4 +30,7 @@ async def upload_video(file: UploadFile = File(...)):
     # Run your main processing script
     subprocess.run(["python", "main.py"])
 
-    return {"message": "Processing complete! Check output_videos folder."}
+    return {
+        "message": "Processing complete!",
+        "output_url": f"/output/processed_video.mp4"  # adjust filename accordingly
+    }
